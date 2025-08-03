@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+
+<body>
+  <style>
+    html,
+    body {
+      height: 100%;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+      /* background: #f8f9fa; */
+      background: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .container {
+      text-align: center;
+      max-width: 400px;
+      width: 90%;
+    }
+
+    .icon {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+    }
+
+    .title {
+      color: <?= data.color ?>;
+      font-weight: 700;
+      margin: 0 0 12px 0;
+    }
+
+    .subtitle {
+      color: #6c757d;
+      line-height: 1.4;
+      margin: 0;
+    }
+  </style>
+  <div class="container">
+    <div class="icon"><?= data.icon ?></div>
+    <h1 class="title"><?= data.title ?></h1>
+    <p class="subtitle"><?= data.subtitle ?></p>
+  </div>
+</body>
+
+</html>

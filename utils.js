@@ -3,7 +3,7 @@ function getConfig() {
   let configSheet;
 
   try {
-    configSheet = ss.getSheetByName('Config');
+    configSheet = ss.getSheetByName('config');
   } catch (e) {
     // Create config sheet if it doesn't exist
     configSheet = createConfigSheet(ss);
@@ -27,11 +27,11 @@ function getConfig() {
 }
 
 function createConfigSheet(spreadsheet) {
-  const configSheet = spreadsheet.insertSheet('Config');
+  const configSheet = spreadsheet.insertSheet('config');
 
   // Set up default configuration
   const defaultConfig = [
-    ['Key', 'Value'],
+    ['key', 'value'],
     ['checkin_endpoint', ''],
     ['email_subject', 'Your Event QR Code'],
     ['email_greeting', 'Hello {name},'],

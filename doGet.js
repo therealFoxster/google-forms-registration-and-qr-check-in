@@ -61,7 +61,7 @@ function doGet(e) {
       if (columns.isCheckedIn && data[i][columns.isCheckedIn - 1].trim().length > 0) {
         return errorPage(
           'Already Checked In',
-          `${name} (${email}) has already checked in.`
+          `${name} (${email}) already checked in @ ${data[i][columns.checkinTime - 1]}`
         );
       }
 
@@ -71,7 +71,9 @@ function doGet(e) {
       }
 
       if (columns.checkinTime) {
-        sheet.getRange(i + 1, columns.checkinTime).setValue((new Date()).toISOString());
+        const now = new Date();
+        const formattedTime = `${now.getMonth() + 1}/${now.getDate()}/${now.getFullYear()} ${now.getHours()}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`;
+        sheet.getRange(i + 1, columns.checkinTime).setValue(formattedTime);
       }
 
       return successPage(

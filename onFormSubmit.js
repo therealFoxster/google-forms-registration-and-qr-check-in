@@ -26,17 +26,38 @@ function onFormSubmit(e) {
     sheet.getRange(row, lastCol + 1).setValue(uuid);
   }
 
+  // Handle ID column (row number)
+  let id;
+  if (columns.id) {
+    id = sheet.getRange(row, columns.id).getValue();
+    if (!id) {
+      id = row - 1; // Adjust for header row
+      sheet.getRange(row, columns.id).setValue(id);
+    }
+  } else {
+    // If no ID column found, add one new col in 4th position
+    sheet.insertColumnAfter(3);
+    sheet.getRange(1, 4).setValue('ID');
+    id = row - 1; // Adjust for header row
+    sheet.getRange(row, 4).setValue(id);
+  }
+
   const qrUrl = `https://quickchart.io/qr?text=${config.checkin_endpoint}?uuid=${uuid}&size=${config.qr_size}`;
+  // Generate QR code as blob and attach it
+  const qrBlob = UrlFetchApp.fetch(qrUrl).getBlob();
+  qrBlob.setName(`${uuid}.png`);
 
   const htmlBody = `
-    <p>${config.email_greeting.replace('{name}', name)}</p>
-    <p>${config.email_body}</p>
-    <img src="${qrUrl}" width="${config.qr_size}" height="${config.qr_size}">
-    <p>${config.email_closing}</p>
+    <p>${config.email_body
+      .replace(/\n/g, '<br>')
+      .replaceAll('{event_code}', config.event_code)
+      .replaceAll('{id}', id)
+    }</p>
   `;
 
   GmailApp.sendEmail(email, config.email_subject, "Plain text fallback", {
     htmlBody: htmlBody,
+    attachments: [qrBlob]
   });
 
   // Mark as sent if column exists

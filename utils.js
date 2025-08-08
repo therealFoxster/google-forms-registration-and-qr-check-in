@@ -34,9 +34,7 @@ function createConfigSheet(spreadsheet) {
     ['key', 'value'],
     ['checkin_endpoint', ''],
     ['email_subject', 'Your Event QR Code'],
-    ['email_greeting', 'Hello {name},'],
     ['email_body', 'Thanks for signing up! Please bring this QR code with you to the event for check-in:'],
-    ['email_closing', 'See you soon!'],
     ['qr_size', '200'],
     ['authorized_users', ''],
   ];
@@ -64,6 +62,7 @@ function getColumnMappings(sheet) {
   };
 
   return {
+    id: findCol(['ID Number']),
     name: findCol(['Full Name', 'Name']),
     email: findCol(['Email', 'Email Address']),
     uuid: findCol(['UUID']),

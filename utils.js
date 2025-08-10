@@ -68,7 +68,8 @@ function getColumnMappings(sheet) {
     uuid: findCol(['UUID']),
     isEmailSent: findCol(['Confirmation Sent', 'Sent', 'Email Sent']),
     isCheckedIn: findCol(['Checked In', 'Check']),
-    checkinTime: findCol(['Check-in Time', 'Arrival Time', 'Time'])
+    checkinTime: findCol(['Check-in Time', 'Arrival Time', 'Time']),
+    rejectionCriteria: findCol(['Medical Condition']),
   };
 }
 

@@ -38,7 +38,7 @@ function onFormSubmit(e) {
       } else {
         id = 1; // Start from 1 if no ID above
       }
-      
+
       sheet.getRange(row, columns.id).setValue(id);
     }
   } else {
@@ -47,6 +47,27 @@ function onFormSubmit(e) {
     sheet.getRange(1, 4).setValue('ID');
     id = 1;
     sheet.getRange(row, 4).setValue(id);
+  }
+
+  // Send rejection email
+  if (columns.rejectionCriteria) {
+    const rejectionCriteria = sheet.getRange(row, columns.rejectionCriteria).getValue();
+    if (rejectionCriteria && rejectionCriteria.toLowerCase().includes('yes')) {
+      const html = `
+        <p>${config.rejection_email_body
+          .replace(/\n/g, '<br>')
+          .replaceAll('{full_name}', name)
+          .replaceAll('{id}', id)
+          .replaceAll('{uuid}', uuid)
+        }</p>
+      `;
+
+      GmailApp.sendEmail(email, config.rejection_email_subject, "Plain text fallback", {
+        htmlBody: html
+      });
+
+      return;
+    }
   }
 
   const qrUrl = `https://quickchart.io/qr?text=${config.checkin_endpoint}?uuid=${uuid}&size=${config.qr_size}`;

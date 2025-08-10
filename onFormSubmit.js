@@ -31,14 +31,21 @@ function onFormSubmit(e) {
   if (columns.id) {
     id = sheet.getRange(row, columns.id).getValue();
     if (!id) {
-      id = row - 1; // Adjust for header row
+      // Check id of row above
+      const aboveId = sheet.getRange(row - 1, columns.id).getValue();
+      if (aboveId) {
+        id = aboveId + 1;
+      } else {
+        id = 1; // Start from 1 if no ID above
+      }
+      
       sheet.getRange(row, columns.id).setValue(id);
     }
   } else {
     // If no ID column found, add one new col in 4th position
     sheet.insertColumnAfter(3);
     sheet.getRange(1, 4).setValue('ID');
-    id = row - 1; // Adjust for header row
+    id = 1;
     sheet.getRange(row, 4).setValue(id);
   }
 

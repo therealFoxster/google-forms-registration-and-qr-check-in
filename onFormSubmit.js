@@ -50,8 +50,9 @@ function onFormSubmit(e) {
   const htmlBody = `
     <p>${config.email_body
       .replace(/\n/g, '<br>')
-      .replaceAll('{event_code}', config.event_code)
+      .replaceAll('{full_name}', name)
       .replaceAll('{id}', id)
+      .replaceAll('{uuid}', uuid)
     }</p>
   `;
 

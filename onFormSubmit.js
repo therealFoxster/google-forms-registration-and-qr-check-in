@@ -54,12 +54,7 @@ function onFormSubmit(e) {
     const rejectionCriteria = sheet.getRange(row, columns.rejectionCriteria).getValue();
     if (rejectionCriteria && rejectionCriteria.toLowerCase().includes('yes')) {
       const html = `
-        <p>${config.rejection_email_body
-          .replace(/\n/g, '<br>')
-          .replaceAll('{full_name}', name)
-          .replaceAll('{id}', id)
-          .replaceAll('{uuid}', uuid)
-        }</p>
+        <p>${replaceTokens(config.rejection_email_body, { name, id, uuid })}</p>
       `;
 
       GmailApp.sendEmail(email, config.rejection_email_subject, "Plain text fallback", {
@@ -76,12 +71,7 @@ function onFormSubmit(e) {
   qrBlob.setName(`${uuid}.png`);
 
   const htmlBody = `
-    <p>${config.email_body
-      .replace(/\n/g, '<br>')
-      .replaceAll('{full_name}', name)
-      .replaceAll('{id}', id)
-      .replaceAll('{uuid}', uuid)
-    }</p>
+    <p>${replaceTokens(config.email_body, { name, id, uuid })}</p>
   `;
 
   GmailApp.sendEmail(email, config.email_subject, "Plain text fallback", {

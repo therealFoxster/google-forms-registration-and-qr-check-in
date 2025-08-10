@@ -1,3 +1,11 @@
+function replaceTokens(s, { name, id, uuid }) {
+  return s
+    .replace(/\n/g, '<br>')
+    .replaceAll('{full_name}', name)
+    .replaceAll('{id}', id)
+    .replaceAll('{uuid}', uuid);
+}
+
 function getConfig() {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
   let configSheet;

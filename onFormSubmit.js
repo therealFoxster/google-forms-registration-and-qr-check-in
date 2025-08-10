@@ -3,8 +3,8 @@ function onFormSubmit(e) {
   const row = e.range.getRow();
   // const values = e.values; 
   const values = sheet.getRange(row, 1, 1, sheet.getLastColumn()).getValues()[0];
-  const config = getConfig();
-  const columns = getColumnMappings(sheet);
+  const config = Library.getConfig();
+  const columns = Library.getColumnMappings(sheet);
 
   // Get name and email from form submission
   const name = values[columns.name - 1];
@@ -54,7 +54,7 @@ function onFormSubmit(e) {
     const rejectionCriteria = sheet.getRange(row, columns.rejectionCriteria).getValue();
     if (rejectionCriteria && rejectionCriteria.toLowerCase().includes('yes')) {
       const html = `
-        <p>${replaceTokens(config.rejection_email_body, { name, id, uuid })}</p>
+        <p>${Library.replaceTokens(config.rejection_email_body, { name, id, uuid })}</p>
       `;
 
       GmailApp.sendEmail(email, config.rejection_email_subject, "Plain text fallback", {
@@ -71,7 +71,7 @@ function onFormSubmit(e) {
   qrBlob.setName(`${uuid}.png`);
 
   const htmlBody = `
-    <p>${replaceTokens(config.email_body, { name, id, uuid })}</p>
+    <p>${Library.replaceTokens(config.email_body, { name, id, uuid })}</p>
   `;
 
   GmailApp.sendEmail(email, config.email_subject, "Plain text fallback", {

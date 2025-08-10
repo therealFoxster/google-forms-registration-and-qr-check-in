@@ -1,9 +1,10 @@
-function replaceTokens(s, { name, id, uuid }) {
+function replaceTokens(s, { name, id, uuid, email }) {
   return s
     .replace(/\n/g, '<br>')
     .replaceAll('{full_name}', name)
     .replaceAll('{id}', id)
-    .replaceAll('{uuid}', uuid);
+    .replaceAll('{uuid}', uuid)
+    .replaceAll('{email}', email);
 }
 
 function getConfig() {
@@ -43,8 +44,7 @@ function createConfigSheet(spreadsheet) {
     ['checkin_endpoint', ''],
     ['email_subject', 'Your Event QR Code'],
     ['email_body', 'Thanks for signing up! Please bring this QR code with you to the event for check-in:'],
-    ['qr_size', '200'],
-    ['authorized_users', ''],
+    ['qr_size', '300'],
   ];
 
   configSheet.getRange(1, 1, defaultConfig.length, 2).setValues(defaultConfig);

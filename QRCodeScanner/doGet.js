@@ -1,5 +1,5 @@
 function doGet(e) {
-  const config = getConfig();
+  const config = Library.getConfig();
 
   // Check if authorized_users is configured and not empty
   if (config.authorized_users && config.authorized_users.trim()) {
@@ -7,14 +7,14 @@ function doGet(e) {
     const authorizedEmails = config.authorized_users.split(',').map(email => email.trim().toLowerCase());
 
     if (!userEmail || !authorizedEmails.includes(userEmail.toLowerCase())) {
-      return errorPage(
+      return Library.errorPage(
         'Access Denied',
         `Your email (${userEmail}) is not authorized to access this resource.`
       );
     }
   } else {
     // If no authorized users configured, no access
-    return errorPage(
+    return Library.errorPage(
       'Error',
       `No authorized users configured.`
     );
@@ -23,7 +23,7 @@ function doGet(e) {
   const uuid = e.parameter.uuid;
 
   if (!uuid) {
-    return errorPage(
+    return Library.errorPage(
       'Invalid Request',
       'UUID is missing.'
     );
@@ -31,7 +31,7 @@ function doGet(e) {
 
   const sheet = SpreadsheetApp.openById(config.spreadsheet_id).getActiveSheet();
   const data = sheet.getDataRange().getValues();
-  const columns = getColumnMappings(sheet);
+  const columns = Library.getColumnMappings(sheet);
 
   // Skip header row
   for (let i = 1; i < data.length; i++) {
@@ -43,7 +43,7 @@ function doGet(e) {
       const currentStatus = columns.status ? data[i][columns.status - 1] : '';
       
       if (currentStatus && currentStatus.toLowerCase().includes('checked in')) {
-        return errorPage(
+        return Library.errorPage(
           'Already Checked In',
           `${name} (${email}) already checked in @ ${data[i][columns.checkinTime - 1]}`
         );
@@ -60,14 +60,14 @@ function doGet(e) {
         sheet.getRange(i + 1, columns.checkinTime).setValue(formattedTime);
       }
 
-      return successPage(
+      return Library.successPage(
         'Checked In',
         `${name} (${email}) is checked in!`
       );
     }
   }
 
-  return errorPage(
+  return Library.errorPage(
     'Unknown Participant',
     `No participant found with UUID ${uuid}.`
   );

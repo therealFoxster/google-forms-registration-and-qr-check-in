@@ -33,7 +33,7 @@ function onFormSubmit(e) {
     if (!id) {
       // Check id of row above
       const aboveId = sheet.getRange(row - 1, columns.id).getValue();
-      if (aboveId) {
+      if (aboveId && !isNaN(aboveId)) {
         id = aboveId + 1;
       } else {
         id = 1; // Start from 1 if no ID above
@@ -61,6 +61,11 @@ function onFormSubmit(e) {
         htmlBody: html
       });
 
+      // Set status to rejected
+      if (columns.status) {
+        sheet.getRange(row, columns.status).setValue('Rejected');
+      }
+
       return;
     }
   }
@@ -79,8 +84,8 @@ function onFormSubmit(e) {
     attachments: [qrBlob]
   });
 
-  // Mark as sent if column exists
-  if (columns.isEmailSent) {
-    sheet.getRange(row, columns.isEmailSent).setValue(`Sent`);
+  // Set status to confirmation sent
+  if (columns.status) {
+    sheet.getRange(row, columns.status).setValue('Confirmation Sent');
   }
 }

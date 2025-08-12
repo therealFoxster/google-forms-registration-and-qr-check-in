@@ -39,17 +39,19 @@ function doGet(e) {
       const name = data[i][columns.name - 1];
       const email = data[i][columns.email - 1];
 
-      // Check if already checked in
-      if (columns.isCheckedIn && data[i][columns.isCheckedIn - 1].trim().length > 0) {
+      // Check current status
+      const currentStatus = columns.status ? data[i][columns.status - 1] : '';
+      
+      if (currentStatus && currentStatus.toLowerCase().includes('checked in')) {
         return errorPage(
           'Already Checked In',
           `${name} (${email}) already checked in @ ${data[i][columns.checkinTime - 1]}`
         );
       }
 
-      // Mark as checked in
-      if (columns.isCheckedIn) {
-        sheet.getRange(i + 1, columns.isCheckedIn).setValue('Yes');
+      // Set status to checked in
+      if (columns.status) {
+        sheet.getRange(i + 1, columns.status).setValue('Checked In');
       }
 
       if (columns.checkinTime) {

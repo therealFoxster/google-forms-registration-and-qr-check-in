@@ -74,8 +74,7 @@ function getColumnMappings(sheet) {
     name: findCol(['Full Name', 'Name']),
     email: findCol(['Email', 'Email Address']),
     uuid: findCol(['UUID']),
-    isEmailSent: findCol(['Confirmation Sent', 'Sent', 'Email Sent']),
-    isCheckedIn: findCol(['Checked In', 'Check']),
+    status: findCol(['Status']),
     checkinTime: findCol(['Check-in Time', 'Arrival Time', 'Time']),
     rejectionCriteria: findCol(['Medical Condition']),
   };

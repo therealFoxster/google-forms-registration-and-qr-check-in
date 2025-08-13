@@ -4,7 +4,15 @@ function onFormSubmit(e) {
   // const values = e.values; 
   const values = sheet.getRange(row, 1, 1, sheet.getLastColumn()).getValues()[0];
   const config = Library.getConfig();
-  const columns = Library.getColumnMappings(sheet);
+  let columns = Library.getColumnMappings(sheet);
+
+  // Ensure Status column exists for capacity/waitlist logic
+  if (!columns.status) {
+    const lastCol = sheet.getLastColumn();
+    sheet.insertColumnAfter(lastCol);
+    sheet.getRange(1, lastCol + 1).setValue('Status');
+    columns = Library.getColumnMappings(sheet);
+  }
 
   // Get name and email from form submission
   const name = values[columns.name - 1];
@@ -49,7 +57,9 @@ function onFormSubmit(e) {
     sheet.getRange(row, 4).setValue(id);
   }
 
-  // Send rejection email
+  ////////////
+  // REJECT //
+  ////////////
   if (columns.rejectionCriteria) {
     const rejectionCriteria = sheet.getRange(row, columns.rejectionCriteria).getValue();
     if (rejectionCriteria && rejectionCriteria.toLowerCase().includes('yes')) {
@@ -70,6 +80,61 @@ function onFormSubmit(e) {
     }
   }
 
+  //////////////
+  // WAITLIST //
+  //////////////
+  // Use a lock to avoid race conditions with concurrent submissions
+  const lock = LockService.getScriptLock();
+  let locked = false;
+  try {
+    locked = lock.tryLock(30000);
+    // Capacity-based waitlist only if registration_limit is configured
+    const limit = parseInt(config.registration_limit, 10);
+    if (!isNaN(limit) && limit > 0) {
+      const totalRows = Math.max(0, sheet.getLastRow() - 1);
+      const statusValues = columns.status
+        ? sheet.getRange(2, columns.status, Math.max(0, totalRows)).getValues().flat()
+        : [];
+
+      // Count confirmed seats (Confirmation Sent or Checked In)
+      const confirmedCount = statusValues.reduce((acc, v) => {
+        const s = String(v || '').toLowerCase();
+        return acc + ((s === 'confirmation sent' || s === 'checked in') ? 1 : 0);
+      }, 0);
+
+      if (confirmedCount >= limit) {
+        const waitlistedCount = statusValues.filter(v => String(v || '').toLowerCase() === 'waitlisted').length + 1;
+
+        // Send waitlisted email
+        const html = `
+          <p>${Library
+            .replaceTokens(config.waitlisted_email_body || 'You have been added to the waitlist at position {waitlisted_count}.', { name, id, uuid })
+            .replaceAll('{waitlisted_count}', String(waitlistedCount))
+          }</p>
+        `;
+
+        GmailApp.sendEmail(
+          email,
+          config.waitlisted_email_subject || 'You are on the waitlist',
+          'Plain text fallback',
+          { htmlBody: html }
+        );
+
+        // Set status to waitlisted
+        if (columns.status) {
+          sheet.getRange(row, columns.status).setValue('Waitlisted');
+        }
+
+        return;
+      }
+    }
+  } finally {
+    if (locked) lock.releaseLock();
+  }
+
+  //////////////////
+  // CONFIRMATION //
+  //////////////////
   const qrUrl = `https://quickchart.io/qr?text=${config.checkin_endpoint}?uuid=${uuid}&size=${config.qr_size}`;
   // Generate QR code as blob and attach it
   const qrBlob = UrlFetchApp.fetch(qrUrl).getBlob();

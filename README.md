@@ -73,3 +73,6 @@ This project provides a complete solution for event registration and check-in us
 5. Copy the code from the `doGet.js` file into the App Script project.
 6. Save and deploy the App Script project as a web app. Set the access level to "Anyone with a Google account" and "Execute as user accessing the web app".
 7. Copy the web app URL and set it as the `checkin_endpoint` in `EventRegistrator`'s `config` sheet.
+
+## License
+[The MIT License](LICENSE)

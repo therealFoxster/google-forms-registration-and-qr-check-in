@@ -60,7 +60,7 @@ This project provides a complete solution for event registration and check-in us
 7. Create a trigger for the `onFormSubmit` function to run on form submissions.
 8. Save and deploy the App Script project as a web app. Set the access level to "Anyone" and "Execute as me".
 9. Copy the web app URL and set it as the `cancellation_endpoint` in the `config` sheet.
-    - Note: Change the URL to start with `https://script.google.com/a/*/macros/s/` instead of `https://script.google.com/a/macros/s/` as the latter might not open on devices with mutiple Google accounts signed in (https://stackoverflow.com/a/75926303/31258176)
+    - Note: Change the URL to start with `https://script.google.com/a/*/macros/s/` instead of `https://script.google.com/macros/s/` as the latter might not open on devices with mutiple Google accounts signed in (https://stackoverflow.com/a/75926303/31258176)
 
 ### QRCodeScanner
 1. Create a blank Google Sheet.
